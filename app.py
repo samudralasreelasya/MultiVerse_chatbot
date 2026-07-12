@@ -130,6 +130,24 @@ FUN_FACTS = [
     "💡 Fun fact: You can deploy Streamlit apps for free on Streamlit Cloud.",
 ]
 
+# ---------- TONE + INTENSITY ----------
+TONE_TRAITS = {
+    "😊 Default": None,
+    "🎩 Formal": "formal and professional",
+    "😎 Casual": "casual and relaxed",
+    "😂 Funny": "humorous and playful",
+    "🔥 Motivational": "motivational and energetic",
+    "🧘 Calm & Simple": "calm and simple",
+}
+
+INTENSITY_WORDS = {
+    1: "very slightly",
+    2: "slightly",
+    3: "moderately",
+    4: "strongly",
+    5: "extremely",
+}
+
 # ---------- SIDEBAR ----------
 st.sidebar.title("🌌 Choose Your Guide")
 
@@ -137,9 +155,21 @@ category = st.sidebar.selectbox("📂 Topic", list(CATEGORIES.keys()))
 personality = st.sidebar.selectbox("🌟 Personality", list(CATEGORIES[category].keys()))
 selected = CATEGORIES[category][personality]
 
-st.sidebar.markdown(f"**Tone:** {selected['tone']}")
+st.sidebar.markdown(f"**Base Tone:** {selected['tone']}")
 st.sidebar.markdown("---")
 
+st.sidebar.markdown("**🎚️ Adjust Response Tone**")
+selected_tone_label = st.sidebar.selectbox("Tone Style", list(TONE_TRAITS.keys()))
+
+trait = TONE_TRAITS[selected_tone_label]
+if trait:
+    tone_intensity = st.sidebar.slider("Tone Intensity", min_value=1, max_value=5, value=3)
+    intensity_word = INTENSITY_WORDS[tone_intensity]
+    tone_instruction = f"Respond in a {intensity_word} {trait} tone."
+else:
+    tone_instruction = ""
+
+st.sidebar.markdown("---")
 st.sidebar.markdown("**💬 Quick starters:**")
 quick_prompt = None
 for starter in selected["starters"]:
@@ -191,6 +221,8 @@ if user_message:
 
     ai_instructions = f"""
     {selected['prompt']}
+
+    {tone_instruction}
 
     Stay completely in character.
     Keep responses friendly and conversational.
