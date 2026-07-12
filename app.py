@@ -9,7 +9,7 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 st.set_page_config(
-    page_title="🌌 AI Multiverse",
+    page_title="🌌 Sreelasya's AI Multiverse",
     page_icon="🌌",
     layout="centered"
 )
