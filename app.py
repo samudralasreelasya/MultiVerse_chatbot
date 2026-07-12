@@ -1,13 +1,14 @@
 import os
 import random
+import pandas as pd
 from dotenv import load_dotenv
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 from database import init_db, save_message, fetch_all_messages, fetch_stats
 
 # Load API key
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 init_db()
 
 st.set_page_config(
@@ -220,8 +221,10 @@ if page == "💬 Chat":
         with st.chat_message("assistant", avatar=selected["avatar"]):
             with st.spinner(selected["spinner"]):
                 try:
-                    model = genai.GenerativeModel("gemini-2.5-flash")
-                    response = model.generate_content(ai_instructions)
+                    response = client.models.generate_content(
+                        model="gemini-2.5-flash",
+                        contents=ai_instructions
+                    )
                     st.markdown(response.text)
                     st.session_state.messages.append({"role": "assistant", "content": response.text})
                     save_message(personality, selected_tone_label, "assistant", response.text)
